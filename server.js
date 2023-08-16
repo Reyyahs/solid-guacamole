@@ -29,4 +29,34 @@ app.get("/", (req, res) => {
       res.status(500).json("Internal server error");
     }
   });
+
+  app.post("/api/notes", async (req, res) => {
+    const { title, text } = req.body;
+    if (title && text) {
+      try {
+        const data = await fsPromises.readFile(
+          path.join(__dirname, "db", "db.json"),
+          "utf8"
+        );
+        const notes = JSON.parse(data);
+        const newNote = {
+          title,
+          text,
+          id: notes.length + 1,
+        };
+        notes.push(newNote);
+        await fsPromises.writeFile(
+          path.join(__dirname, "db", "db.json"),
+          JSON.stringify(notes, null, 4)
+        );
+        console.info("Note successfully saved.");
+        res.send("Note successfully saved.");
+      } catch (err) {
+        console.error(err);
+        res.status(500).json("Error occurred while saving the note.");
+      }
+    } else {
+      res.status(400).json("Bad request: Title and text are required.");
+    }
+  });
   
