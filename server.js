@@ -83,4 +83,8 @@ app.get("/", (req, res) => {
       res.status(500).json("Internal server error");
     }
   });
+
+  app.listen(PORT, () => {
+    console.log(`App listening at http://localhost:${PORT}`);
+  });
   
