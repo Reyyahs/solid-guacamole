@@ -16,4 +16,17 @@ app.get("/", (req, res) => {
   app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "notes.html"));
   });
+
+  app.get("/api/notes", async (req, res) => {
+    try {
+      const data = await fsPromises.readFile(
+        path.join(__dirname, "db", "db.json"),
+        "utf8"
+      );
+      res.json(JSON.parse(data));
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Internal server error");
+    }
+  });
   
