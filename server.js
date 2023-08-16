@@ -59,4 +59,28 @@ app.get("/", (req, res) => {
       res.status(400).json("Bad request: Title and text are required.");
     }
   });
+
+  app.delete("/api/notes/:id", async (req, res) => {
+    const deleteID = req.params.id;
+    try {
+      const data = await fsPromises.readFile(
+        path.join(__dirname, "db", "db.json"),
+        "utf8"
+      );
+      const notes = JSON.parse(data);
+      const newNotes = notes.filter((note) => note.id != deleteID);
+      newNotes.forEach((note, index) => {
+        note.id = index + 1;
+      });
+      await fsPromises.writeFile(
+        path.join(__dirname, "db", "db.json"),
+        JSON.stringify(newNotes, null, 4)
+      );
+      console.info("Note successfully deleted.");
+      res.send("Note successfully deleted.");
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Internal server error");
+    }
+  });
   
